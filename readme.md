@@ -15,4 +15,4 @@ de tirar uma espécie de screenshot do elemento html que contem a assinatura.
 Esses elementos html são escondidos e apenas a imagem é mostrada.
 
 #### Como usar? ####
-Se você desejar implementar este projeto, basta alterar as imagens logo.png e template.png que estão no diretório raiz e talvez alterar os dados no formulário (index.html) para incluir determinada informação.
+Se você desejar implementar este projeto, basta alterar as imagens logo.png e template.png que estão no diretório raiz e caso haja necessidade, alterar os dados no formulário (index.html) para incluir determinada informação.
