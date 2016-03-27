@@ -1,0 +1,197 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+	<link rel="stylesheet" type="text/css" href="style.css">
+
+
+
+</head>
+<body>
+
+	<header>
+		<img id="logo" src="http://www.mundow3.com.br/wp-content/uploads/2014/11/Logo.png">
+	</header>
+
+		<div class="container">
+		  <h2 id="titulo">Gerador de Assinaturas</h2>
+		  <br>
+		  <form class="form-horizontal">
+
+		    <div class="form-group">
+		      <label for="nome" class="col-sm-2 control-label nome-form">Nome</label>
+		      <div name="name" class="col-sm-10">
+		        <input name="name" type="text" class="form-control" id="nome" placeholder="Seu nome" value="" autocomplete maxlength="50">
+		      </div>
+		    </div>
+
+		    <div class="form-group">
+		      <label for="cargo" class="col-sm-2 control-label nome-form">Cargo exercido</label>
+		      <div class="col-sm-10">
+		        <input name="cargo" type="text" class="form-control" id="cargo" placeholder="Seu cargo" value="" autocomplete maxlength="50">
+		      </div>
+		    </div>
+
+
+		    <div class="form-group">
+		      <div class="col-sm-offset-2 col-sm-10">
+		        <button type="button" class="btn btn-default" onclick="gerar()"> Gerar Assinatura </button>
+		      </div>
+		    </div>
+
+		  </form>
+
+		  <div id="alertdiv" class="alert alert-dismissible hidden" role="alert">
+		    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+		    </button> <span id="alerttext">Text</span>
+		  </div>
+
+		  <br>
+		  <h4>Sua Assinatura</h2>        
+		             
+			<div id="assinatura" class="well">
+			    <div class="text-muted text-center small">
+			        Clique no botão Gerar para criar uma assinatura
+			    </div>
+				<script type="template/html" id="t2">
+
+				
+					<footer id="teste">
+						<div style="font-family: Helvetica, Arial;" class="texto" id="texto-assinatura">
+
+							<p><h1 id="nome-p">{{this.nome}}</h1><br>
+							<h2 id="cargo-p">{{this.cargo}}</h2></p>
+
+
+						</div>
+
+						<div id="img-template">
+							<img src="http://i.imgur.com/UHUoh0E.png" alt="Rodapé: MundoW3"/>
+						</div>
+
+					</footer>
+				
+				</script>
+			</div>
+
+	   
+		</div>
+
+	     
+		<footer>
+		    <div class="footer text-center text-muted small">MundoW3</a> &copy; 2016</div>
+		</footer>
+
+
+		<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		<script src="dist/html2canvas.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+
+		<script type="text/javascript">
+
+			var template;
+			var dismiss;
+
+			window.onload = function() {
+			  template = generateTemplate("#t2");
+			}
+
+			function gerar() {
+			  var dados = {
+			    nome: nome.value || "[Digite Nome]",
+			    cargo: cargo.value || "[Digite Cargo]",
+			  };
+
+			  assinatura.innerHTML = template.apply(dados);
+
+			  createSelection(assinatura);
+
+				html2canvas(document.querySelector("#teste"), {
+				  onrendered: function(canvas) {
+				    document.querySelector("#teste").appendChild(canvas);
+				  },
+				  width: 400
+				});
+
+
+		    	document.getElementById("img-template").style.display = 'none';
+		    	document.getElementById("texto-assinatura").style.display = 'none';
+
+			  try {
+			    var successful = document.execCommand('copy');
+			    var msg = successful ? 'successful' : 'unsuccessful';
+
+			    alerttext.innerHTML = ('Assinatura gerada com sucesso!');
+			    alertdiv.classList.add("alert-success");
+			    alertdiv.classList.remove("hidden");
+			  } catch (err) {
+			    alerttext.innerHTML = ('Aperte <code>CTRL+C</code> para copiar');
+			    alertdiv.classList.add("alert-info");
+			    alertdiv.classList.remove("hidden");
+			  }
+
+			  if (dismiss) clearTimeout(dismiss);
+			  dismiss = setTimeout(function() {
+			    alertdiv.classList.add("hidden");
+			  }, 15000);
+			}
+
+			function createSelection(element) {
+			  var selection = window.getSelection();
+			  var range = document.createRange();
+			  range.setStartBefore(element.firstChild);
+			  range.setEndAfter(element.lastChild);
+			  selection.removeAllRanges();
+			  selection.addRange(range);
+			}
+
+
+			var compileTemplate = function(html) {
+			  var re = /{{([^}]*(?:}[^}]+)*}*)}}/g,
+			    reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
+			    code = 'var r=[];\n',
+			    cursor = 0,
+			    match;
+
+			  var add = function(line, js) {
+			    js ? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') : (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
+			    return add;
+			  }
+			  while (match = re.exec(html)) {
+			    add(html.slice(cursor, match.index))(match[1], true);
+			    cursor = match.index + match[0].length;
+			  }
+			  add(html.substr(cursor, html.length - cursor));
+			  code += 'return r.join("");';
+
+			  var template = new Function(code.replace(/[\r\t\n]/g, ''));
+			  return template;
+			}
+
+			function generateTemplate(selector) {
+			  var el = document.querySelector(selector);
+			  if (el.type.toLowerCase() == "template/html") {
+			    return compileTemplate(el.innerHTML);
+			  } else throw Error("Type of '" + selector + "' is not a template/html");
+			}
+
+		</script>
+
+
+
+
+
+</body>
+</html>
